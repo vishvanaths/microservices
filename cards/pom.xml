@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.vish</groupId>
-    <artifactId>loans</artifactId>
+    <artifactId>cards</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>loans</name>
-    <description>Loans microservice</description>
+    <name>cards</name>
+    <description>Cards microservice</description>
     <properties>
         <java.version>11</java.version>
     </properties>
@@ -58,9 +58,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <image>
-                        <name>bankapp/${project.artifactId}</name>
-                    </image>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

@@ -1,0 +1,10 @@
+FROM openjdk:11-slim as build
+
+#maintainer
+MAINTAINER vish.com
+
+#jar copy
+COPY target/cards-0.0.1-SNAPSHOT.jar cards-0.0.1-SNAPSHOT.jar
+
+#execute and start app
+ENTRYPOINT ["java", "-jar", "-Dnetwork.sql.host=${sqlserver}", "-Dnetwork.sql.host.port=${sqlport}", "/cards-0.0.1-SNAPSHOT.jar"]

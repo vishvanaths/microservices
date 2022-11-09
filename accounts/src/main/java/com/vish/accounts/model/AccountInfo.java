@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDate;
 
-@Entity(name = "account")
+@Entity(name = "accounts")
 @Getter @Setter @ToString
 public class AccountInfo {
     @Column(name = "customer_id")
