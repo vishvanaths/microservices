@@ -4,7 +4,6 @@ create user 'springuser'@'%' identified by 'ThePassword';
 grant all on *.* to 'springuser'@'%';
 USE microservices_db;
 
-drop table 'hibernate_sequence';
 CREATE TABLE `customer` (
   `customer_id` int AUTO_INCREMENT  PRIMARY KEY,
   `name` varchar(100) NOT NULL,

@@ -1,34 +1,24 @@
 version: "3.8"
 
 services:
-  mysqldb:
-    image: mysql/mysql-server:8.0.20
-    container_name: mysqldb
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    ports:
-      - "18000:3306"
-    volumes:
-    - //d/dockeritems/mysqlvm:/var/lib/mysql
-    - ./data.sql:/data/application/init.sql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: microservices_db
-      MYSQL_USER: springuser
-      MYSQL_PASSWORD: ThePassword
-    networks:
-      - bankapp-network
-
   accounts:
     image: bankapp/accounts:latest
     mem_limit: 700m
     ports:
       - "18080:8080"
     environment:
-      sqlserver: mysqldb
-      sqlport: 3306
-    depends_on:
-      - "mysqldb"
+      - sqlserver=mysqldb
+      - sqlport=3306
+      - SPRING_ACTIVE_PROFILES=dev
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
+    # depends_on:
+    #   - "mysqldb"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
     networks:
       - bankapp-network
 
@@ -36,12 +26,20 @@ services:
     image: bankapp/loans:latest
     mem_limit: 700m
     environment:
-      sqlserver: mysqldb
-      sqlport: 3306
+      - sqlserver=mysqldb
+      - sqlport=3306
+      - SPRING_ACTIVE_PROFILES=dev
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     ports:
       - "18090:8090"
-    depends_on:
-      - "mysqldb"
+    # depends_on:
+    #   - "mysqldb"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
     networks:
       - bankapp-network
 
@@ -49,14 +47,22 @@ services:
     image: bankapp/cards:latest
     mem_limit: 700m
     environment:
-      sqlserver: mysqldb
-      sqlport: 3306
+      - sqlserver=mysqldb
+      - sqlport=3306
+      - SPRING_ACTIVE_PROFILES=dev
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     ports:
-      - "18070:8070"
+      - "18060:8060"
+    # depends_on:
+    #   - "mysqldb"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
     networks:
       - bankapp-network
-    depends_on:
-      - "mysqldb"
 
 networks:
   bankapp-network:
