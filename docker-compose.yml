@@ -1,6 +1,23 @@
 version: "3.8"
 
 services:
+  eurekaserver:
+    image: bankapp/eurekaserver:latest
+    mem_limit: 300m
+    ports:
+      - "18070:8070"
+    depends_on:
+      - "bankappconfigserver"
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3  
+    networks:
+      - bankapp-network 
+
   accounts:
     image: bankapp/accounts:latest
     mem_limit: 700m
@@ -12,8 +29,8 @@ services:
       - SPRING_ACTIVE_PROFILES=dev
       - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
-    # depends_on:
-    #   - "mysqldb"
+    depends_on:
+      - "eurekaserver"
     deploy:
       restart_policy:
         condition: on-failure
@@ -33,8 +50,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     ports:
       - "18090:8090"
-    # depends_on:
-    #   - "mysqldb"
+    depends_on:
+      - "eurekaserver"
     deploy:
       restart_policy:
         condition: on-failure
@@ -54,8 +71,8 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
     ports:
       - "18060:8060"
-    # depends_on:
-    #   - "mysqldb"
+    depends_on:
+      - "eurekaserver"
     deploy:
       restart_policy:
         condition: on-failure

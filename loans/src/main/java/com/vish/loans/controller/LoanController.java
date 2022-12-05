@@ -20,6 +20,7 @@ public class LoanController {
 
     @GetMapping("/{customerId}/loans")
     public List<LoanInfo> getAccountDetails(@PathVariable int customerId){
+        System.out.println("Loading Loans");
         return loanRepository.findByCustomerIdOrderByStartDtDesc(customerId);
     }
 }
