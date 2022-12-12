@@ -6,8 +6,8 @@ services:
     mem_limit: 300m
     ports:
       - "18070:8070"
-#    depends_on:
-#      - "bankappconfigserver"
+    depends_on:
+      - "bankappconfigserver"
     environment:
       - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
     deploy:
@@ -16,7 +16,7 @@ services:
         delay: 120s
         max_attempts: 3  
     networks:
-      - bankapp-network
+      - bankapp-network 
 
   accounts:
     image: bankapp/accounts:latest
@@ -81,28 +81,6 @@ services:
     networks:
       - bankapp-network
 
-
-  gatewayserver:
-    image: bankapp/gatewayserver:latest
-    mem_limit: 700m
-    ports:
-      - "18072:8072"
-    environment:
-      - SPRING_ACTIVE_PROFILES=default
-      - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
-    depends_on:
-      - "eurekaserver"
-      - "accounts"
-      - "cards"
-      - "loans"
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 120s
-        max_attempts: 3
-    networks:
-      - bankapp-network
 networks:
   bankapp-network:
     driver: bridge
