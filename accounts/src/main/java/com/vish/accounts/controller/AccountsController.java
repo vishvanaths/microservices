@@ -37,7 +37,7 @@ public class AccountsController {
 
     @PostMapping("/{customerId}/allaccounts")
     @CircuitBreaker(name ="customerDetailsFetchCB", fallbackMethod = "customerDetailsFallBack")
-    public  CustomerDetails getMyCustomerDetails(@PathVariable int customerId){
+    public CustomerDetails getMyCustomerDetails(@PathVariable int customerId){
         AccountInfo accountInfo = accountRepository.getByCustomerId(customerId);
         List<LoanInfo> loans = loanFeignClient.getLoadDetails(customerId);
         List<CardInfo> cards = cardsFeignClient.getCardDetails(customerId);
