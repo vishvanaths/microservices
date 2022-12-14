@@ -1,22 +1,50 @@
 version: "3.8"
 
 services:
+  grafana:
+    image: "grafana/grafana:latest"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    networks:
+      - bankapp-network
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - bankapp-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    mem_limit: 700m
+    ports:
+      - "9411:9411"
+    networks:
+      - bankapp-network
+
   eurekaserver:
     image: bankapp/eurekaserver:latest
     mem_limit: 300m
     ports:
       - "18070:8070"
-    depends_on:
-      - "bankappconfigserver"
     environment:
       - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
+      - SPRING_ZIPKIN_BASEURL=http://zipkin:9411/
     deploy:
       restart_policy:
         condition: on-failure
         delay: 120s
-        max_attempts: 3  
+        max_attempts: 3
     networks:
-      - bankapp-network 
+      - bankapp-network
 
   accounts:
     image: bankapp/accounts:latest
@@ -29,6 +57,7 @@ services:
       - SPRING_ACTIVE_PROFILES=dev
       - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
+      - SPRING_ZIPKIN_BASEURL=http://zipkin:9411/
     depends_on:
       - "eurekaserver"
     deploy:
@@ -48,6 +77,7 @@ services:
       - SPRING_ACTIVE_PROFILES=dev
       - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
+      - SPRING_ZIPKIN_BASEURL=http://zipkin:9411/
     ports:
       - "18090:8090"
     depends_on:
@@ -69,10 +99,34 @@ services:
       - SPRING_ACTIVE_PROFILES=dev
       - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
+      - SPRING_ZIPKIN_BASEURL=http://zipkin:9411/
     ports:
       - "18060:8060"
     depends_on:
       - "eurekaserver"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
+    networks:
+      - bankapp-network
+
+  gatewayserver:
+    image: bankapp/gatewayserver:latest
+    mem_limit: 700m
+    ports:
+      - "18072:8072"
+    environment:
+      - SPRING_ACTIVE_PROFILES=default
+#      - SPRING_CONFIG_IMPORT=optional:configserver:http://bankappconfigserver:8071
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8070/eureka/
+      - SPRING_ZIPKIN_BASEURL=http://zipkin:9411/
+    depends_on:
+      - "eurekaserver"
+      - "accounts"
+      - "cards"
+      - "loans"
     deploy:
       restart_policy:
         condition: on-failure
