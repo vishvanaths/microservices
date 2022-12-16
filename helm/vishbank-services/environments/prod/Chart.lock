@@ -1,0 +1,27 @@
+dependencies:
+- name: vishbank-common
+  repository: file://../../../vishbank-common
+  version: 0.1.0
+- name: accounts
+  repository: file://../../accounts
+  version: 0.1.0
+- name: cards
+  repository: file://../../cards
+  version: 0.1.0
+- name: configserver
+  repository: file://../../configserver
+  version: 0.1.0
+- name: eurekaserver
+  repository: file://../../eurekaserver
+  version: 0.1.0
+- name: gatewayserver
+  repository: file://../../gatewayserver
+  version: 0.1.0
+- name: loans
+  repository: file://../../loans
+  version: 0.1.0
+- name: zipkin
+  repository: file://../../zipkin
+  version: 0.1.0
+digest: sha256:72bd4c2620280cea95595b4b4a06ced665da1054932bf3ea42d520ee43acb07f
+generated: "2022-12-15T14:22:00.4164239-05:00"

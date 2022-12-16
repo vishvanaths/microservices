@@ -1,0 +1,6 @@
+dependencies:
+- name: vishbank-common
+  repository: file://../../vishbank-common
+  version: 0.1.0
+digest: sha256:56e9ee10238ff769ee6adb6dbbfeed7ad5b76fd387e7a6dd4c320cfdf7e43446
+generated: "2022-12-15T13:00:45.79453-05:00"
